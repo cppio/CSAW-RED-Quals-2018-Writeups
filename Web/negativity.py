@@ -1,25 +1,27 @@
-import requests
+import secrets
 import time
-import uuid
+
+import requests
+
+BASE_URL = "http://web.chal.csaw.io:10106/"
 
 s = requests.session()
 
-username = str(uuid.uuid4())
-auth = s.post("http://web.chal.csaw.io:10106/user/register", json={"username": username, "password": username}).json()["Authorization"]
+username = secrets.token_urlsafe()
+s.headers["Authorization"] = s.post(BASE_URL + "user/register", json={"username": username, "password": username}).json()["Authorization"]
 
-s.post("http://web.chal.csaw.io:10106/clicker/purchase", json={"name": "base"}, headers={"Authorization": auth})
+s.post(BASE_URL + "clicker/purchase", json={"name": "base"})
 
 for i in range(10):
-    s.post("http://web.chal.csaw.io:10106/clicker/click", json={"name": "base"}, headers={"Authorization": auth})
+    s.post(BASE_URL + "clicker/click", json={"name": "base"})
     time.sleep(0.5)
 
-s.post("http://web.chal.csaw.io:10106/clicker/purchase", json={"name": "momo"}, headers={"Authorization": auth})
+s.post(BASE_URL + "clicker/purchase", json={"name": "momo"})
 
 for i in range(11):
-    s.post("http://web.chal.csaw.io:10106/clicker/click", json={"name": "base"}, headers={"Authorization": auth})
+    s.post(BASE_URL + "clicker/click", json={"name": "base"})
     time.sleep(0.5)
 
-s.post("http://web.chal.csaw.io:10106/clicker/purchase", json={"name": "momo"}, headers={"Authorization": auth})
+s.post(BASE_URL + "clicker/purchase", json={"name": "momo"})
 
-
-print(s.get("http://web.chal.csaw.io:10106/default/money", headers={"Authorization": auth}).json())
+print(s.get(BASE_URL + "default/money").json())
